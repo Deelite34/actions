@@ -1,0 +1,18 @@
+name: pack-frontend
+description: Packs frontend for deployment and uploads artifact
+
+
+runs:
+  using: composite
+  steps:
+    - name: build code
+      shell: bash
+      working-directory: ./frontend
+      run: yarn run build --dest ../public
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: frontend
+        path: ./public
+        retention-days: 1
+        if-no-files-found: error

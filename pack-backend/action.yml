@@ -1,0 +1,23 @@
+name: pack-backend
+description: Packs backend for deployment and uploads artifact
+
+
+runs:
+  using: composite
+  steps:
+    - name: pack dependencies
+      shell: bash
+      working-directory: ./backend
+      run: 7z a ../lambda.zip ./.venv/lib/python*/site-packages/*
+
+    - name: pack source code
+      shell: bash
+      working-directory: ./backend
+      run: 7z a ../lambda.zip -xr'!.venv' migrations ../backend
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: backend
+        path: lambda.zip
+        retention-days: 1
+        if-no-files-found: error

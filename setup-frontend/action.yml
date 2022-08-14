@@ -3,11 +3,6 @@ description: Sets up runner environment for frontend code.
 
 
 inputs:
-  cache-version:
-    description: Cache version used for invalidation
-    default: '1'
-    required: false
-    type: string
   node-version:
     description: Node.js version to use
     default: '12'
@@ -29,13 +24,6 @@ runs:
 
     - name: set helper variable
       shell: bash
-      run: echo "${name}=${value}" >> $GITHUB_ENV
-      env:
-        name: my_cache_prefix
-        value: cache${{ inputs.cache-version }}-${{ runner.os }}-node${{ inputs.node-version }}
-
-    - name: set helper variable
-      shell: bash
       run: echo "${name}=$(${value})" >> $GITHUB_ENV
       env:
         name: my_yarn_cache_path
@@ -47,8 +35,8 @@ runs:
         path: |
           /usr/local/bin/yarn*
           /usr/local/lib/node_modules/yarn
-        key: ${{ env.my_cache_prefix }}-yarn${{ inputs.yarn-version }}
-        restore-keys: ${{ env.my_cache_prefix }}-yarn
+        key: ${{ runner.os }}-node${{ inputs.node-version }}-yarn${{ inputs.yarn-version }}
+        restore-keys: ${{ runner.os }}-node${{ inputs.node-version }}-yarn
 
     - name: conditionally install yarn
       shell: bash
@@ -62,8 +50,8 @@ runs:
         path: |
           **/node_modules
           ${{ env.my_yarn_cache_path }}
-        key: ${{ env.my_cache_prefix }}-lockfile${{ hashFiles('**/yarn.lock') }}
-        restore-keys: ${{ env.my_cache_prefix }}-lockfile
+        key: ${{ runner.os }}-node${{ inputs.node-version }}-lockfile${{ hashFiles('**/yarn.lock') }}
+        restore-keys: ${{ runner.os }}-node${{ inputs.node-version }}-lockfile
 
     - name: conditionally install dependencies
       shell: bash

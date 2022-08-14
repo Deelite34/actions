@@ -1,20 +1,15 @@
 name: setup-backend
-description: Sets up runner environment for backend code
+description: Sets up runner environment for backend code.
 
 
 inputs:
-  cache-version:
-    description: Cache version used for invalidation. Example '1'
-    default: '1'
-    required: false
-    type: string
   python-version:
-    description: Python version to use. Example '3.8'
+    description: Python version to use
     default: '3.8'
     required: false
     type: string
   pipenv-version:
-    description: Pipenv version to use. Example '2022.1.8'
+    description: Pipenv version to use
     default: '2022.1.8'
     required: false
     type: string
@@ -28,34 +23,27 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
-    - name: set helper variable
-      shell: bash
-      run: echo "${name}=${value}" >> $GITHUB_ENV
-      env:
-        name: my_cache_prefix
-        value: ${{ runner.os }}-python${{ inputs.python-version }}-cache${{ inputs.cache-version }}
-
     - uses: actions/cache@v2
       id: cache-pipenv
       with:
         path: |
           ${{ env.pythonLocation }}/bin/pipenv
           ${{ env.pythonLocation }}/lib/python${{ inputs.python-version }}/site-packages/pipenv
-        key: ${{ env.my_cache_prefix }}-pipenv-${{ inputs.pipenv-version }}
-        restore-keys: ${{ env.my_cache_prefix }}-pipenv-
+        key: ${{ runner.os }}-python${{ inputs.python-version }}-pipenv${{ inputs.pipenv-version }}
+        restore-keys: ${{ runner.os }}-python${{ inputs.python-version }}-pipenv
 
     - name: conditionally install pipenv
       shell: bash
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       working-directory: ./backend
-      run: pip install pipenv=="${{ inputs.pipenv-version }}"
+      run: pip install pipenv==${{ inputs.pipenv-version }}
 
     - uses: actions/cache@v2
       id: cache-lockfile
       with:
         path: ./backend/.venv
-        key: ${{ env.my_cache_prefix }}-lockfile-${{ hashFiles('**/Pipfile.lock') }}
-        restore-keys: ${{ env.my_cache_prefix }}-lockfile-
+        key: ${{ runner.os }}-python${{ inputs.python-version }}-lockfile${{ hashFiles('**/Pipfile.lock') }}
+        restore-keys: ${{ runner.os }}-python${{ inputs.python-version }}-lockfile
 
     - name: conditionally install dependencies
       shell: bash

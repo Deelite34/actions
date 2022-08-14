@@ -1,5 +1,16 @@
 name: pack-frontend
-description: Packs frontend for deployment and uploads artifact
+description: Packs frontend for deployment and uploads artifact.
+
+
+inputs:
+  environment-name:
+    description: environment name
+    required: true
+    type: string
+  environment-url:
+    description: environment url
+    required: false
+    type: string
 
 
 runs:
@@ -9,6 +20,10 @@ runs:
       shell: bash
       working-directory: ./frontend
       run: yarn run build --dest ../public
+      env:
+        NODE_ENV: ${{ inputs.environment-name }}
+        ENVIRONMENT_NAME: ${{ inputs.environment-name }}
+        ENVIRONMENT_URL: ${{ inputs.environment-url }}
 
     - uses: actions/upload-artifact@v3
       with:

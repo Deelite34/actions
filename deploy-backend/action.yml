@@ -1,5 +1,5 @@
 name: deploy-backend
-description: Deploys backend artifact to AWS
+description: Deploys backend artifact to AWS.
 
 
 inputs:
@@ -18,43 +18,27 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: upload artifact (serverless_api)
+    - name: upload artifact
       shell: bash
       run: >
         aws s3 cp
-        "${{ inputs.artifact-path }}"
-        "s3://codeforpoznan-lambdas/${{ inputs.aws-resource-name }}_serverless_api.zip"
+        ${{ inputs.artifact-path }}
+        s3://codeforpoznan-lambdas/${{ inputs.aws-resource-name }}_serverless_api.zip
 
-    - name: upload artifact (migration)
-      shell: bash
-      run: >
-        aws s3 cp
-        "${{ inputs.artifact-path }}"
-        "s3://codeforpoznan-lambdas/${{ inputs.aws-resource-name }}_migration.zip"
-
-    - name: refresh lambdas (serverless_api)
+    - name: refresh lambda
       shell: bash
       run: >
         aws lambda update-function-code
-        --s3-bucket     "codeforpoznan-lambdas"
-        --s3-key        "${{ inputs.aws-resource-name }}_serverless_api.zip"
-        --function-name "${{ inputs.aws-resource-name }}_serverless_api"
-        | jq 'del(.Environment, .VpcConfig, .Role, .FunctionArn)'
-
-    - name: refresh lambdas (migration)
-      shell: bash
-      run: >
-        aws lambda update-function-code
-        --s3-bucket     "codeforpoznan-lambdas"
-        --s3-key        "${{ inputs.aws-resource-name }}_migration.zip"
-        --function-name "${{ inputs.aws-resource-name }}_migration"
+        --s3-bucket     codeforpoznan-lambdas
+        --s3-key        ${{ inputs.aws-resource-name }}_serverless_api.zip
+        --function-name ${{ inputs.aws-resource-name }}_serverless_api
         | jq 'del(.Environment, .VpcConfig, .Role, .FunctionArn)'
 
     - name: run migration lambda
       shell: bash
       run: >
         aws lambda invoke
-        --function-name "${{ inputs.aws-resource-name }}_migration"
+        --function-name ${{ inputs.aws-resource-name }}_serverless_api
         response.json > request.json
 
     - name: show migration output

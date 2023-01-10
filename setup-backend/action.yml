@@ -15,7 +15,7 @@ inputs:
     type: string
   pipenv-version:
     description: Pipenv version to use. Example '2022.1.8'
-    default: '2022.1.8'
+    default: '2022.12.19'
     required: false
     type: string
 

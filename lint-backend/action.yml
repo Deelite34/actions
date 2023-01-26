@@ -1,13 +1,14 @@
-name: pr-linter
-description: Backend PR pr-linter
-on: [pull_request]
-jobs:
-  lint:
-    runs-on: [ubuntu-latest]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - uses: psf/black@master
-      - uses: isort/isort-action@master
-        with:
-          configuration: " --check-only --diff --profile black"
+name: lint-backend
+description: lint the backend code using common defaults.
+
+runs:
+  using: composite
+  steps:
+    - uses: isort/isort-action@v1
+      with:
+        sort-paths: backend
+        configuration: --check-only --diff --profile black
+
+    - uses: psf/black@22.12.0
+      with:
+        src: backend

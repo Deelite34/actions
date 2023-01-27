@@ -8,8 +8,4 @@ on:
 
 jobs:
   test-yaml:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: validate yaml files
-        run: yq true $(find . -name '*.yml' -o -name '*.yaml')
+    uses: ./.github/workflows/call-validate-data-files.yml

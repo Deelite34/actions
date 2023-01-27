@@ -1,4 +1,4 @@
-name: test if yaml files are valid
+name: validate
 
 on:
   pull_request:
@@ -7,5 +7,5 @@ on:
     paths: ['**/**.yml', '**/**.yaml']
 
 jobs:
-  test-yaml:
+  validate:
     uses: ./.github/workflows/call-validate-data-files.yml

@@ -1,4 +1,4 @@
-name: validate data files
+name: _ (call) validate data files
 
 on:
   workflow_call:

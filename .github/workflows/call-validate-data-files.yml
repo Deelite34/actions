@@ -1,0 +1,19 @@
+name: validate data files
+
+on:
+  workflow_call:
+
+jobs:
+  json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: validate json files
+        run: jq true $(find . -name '*.json')
+
+  yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: validate yaml files
+        run: yq true $(find . -name '*.yml' -o -name '*.yaml')

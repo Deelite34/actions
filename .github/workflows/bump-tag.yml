@@ -1,0 +1,22 @@
+name: bump major tag to latest release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  bump-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: configure git
+        run: |
+          git config --global user.name  github-actions[bot]
+          git config --global user.email github-actions[bot]@users.noreply.github.com
+
+      - name: update latest tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          MAJOR=${VERSION%%.*}
+          git tag         --force ${MAJOR}
+          git push origin --force ${MAJOR} 

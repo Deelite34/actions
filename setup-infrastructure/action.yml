@@ -1,0 +1,57 @@
+name: setup-infrastructure
+description: Sets up runner environment for infrastructure code.
+
+inputs:
+  terraform-version:
+    description: Terraform version to use
+    default: '1.1.8'
+    required: false
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: set helper variable
+      shell: bash
+      run: echo "${name}=${value}" >> $GITHUB_ENV
+      env:
+        name: my_terraform_zip_name
+        value: terraform_${{ inputs.terraform-version }}_linux_amd64.zip
+        # note: linux_amd64 will stay like that for a while, its tad too difficult to make it parametrized using 
+        #       runner context and the worthiness of it is questionable assuming we'll always use linux on x64 :)
+
+    - name: set helper variable
+      shell: bash
+      run: echo "${name}=${value}" >> $GITHUB_ENV
+      env:
+        name: my_terraform_dl_link
+        value: https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/${{ env.my_terraform_zip_name }}
+
+    - uses: actions/cache@v3
+      id: cache-terraform
+      with:
+        path: terraform
+        key: terraform${{ inputs.terraform-version }}
+        restore-keys: terraform
+
+    - name: conditionally install terraform
+      shell: bash
+      if: steps.cache-terraform.outputs.cache-hit != 'true'
+      run: |
+        wget  ${{ env.my_terraform_dl_link }} 
+        unzip ${{ env.my_terraform_zip_name }} 
+        rm    ${{ env.my_terraform_zip_name }}
+        echo "$(pwd)" >> $GITHUB_PATH
+
+    - uses: actions/cache@v3
+      id: cache-lockfile
+      with:
+        path: .terraform
+        key: terraform${{ inputs.terraform-version }}-lockfile${{ hashFiles('**/.terraform.lock.hcl') }}
+        restore-keys: terraform${{ inputs.terraform-version }}-lockfile
+
+    - name: conditionally install dependencies
+      shell: bash
+      if: steps.cache-lockfile.outputs.cache-hit != 'true'
+      run: terraform init -backend=false
+

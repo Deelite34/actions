@@ -1,6 +1,5 @@
 name: deploy-frontend
-description: Deploys frontend artifact to AWS
-
+description: Deploys frontend artifact to AWS.
 
 inputs:
   artifact-path:
@@ -14,7 +13,6 @@ inputs:
     required: true
     type: string
 
-
 runs:
   using: composite
   steps:
@@ -22,12 +20,12 @@ runs:
       shell: bash
       run: >
         aws s3 sync --delete
-        "${{ inputs.artifact-path }}"
-        "s3://codeforpoznan-public/${{ inputs.aws-resource-name }}"
+        ${{ inputs.artifact-path }}
+        s3://codeforpoznan-public/${{ inputs.aws-resource-name }}
 
     - name: refresh CDN
       shell: bash
       run: >
         aws cloudfront create-invalidation
-        --paths "/*"
-        --distribution-id "${{ inputs.aws-cloudfront-id }}"
+        --distribution-id ${{ inputs.aws-cloudfront-id }}
+        --paths '/*'

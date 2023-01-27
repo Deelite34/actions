@@ -1,0 +1,15 @@
+name: test if yaml files are valid
+
+on:
+  pull_request:
+    paths: ['**/**.yml', '**/**.yaml']
+  push:
+    paths: ['**/**.yml', '**/**.yaml']
+
+jobs:
+  test-yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: validate yaml files
+        run: yq true $(find . -name '*.yml' -o -name '*.yaml')

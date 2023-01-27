@@ -1,49 +1,55 @@
 name: setup-frontend
-description: Sets up runner environment for frontend code
-
+description: Sets up runner environment for frontend code.
 
 inputs:
-  cache-version:
-    description: Cache version used for invalidation. Example '1'
-    default: '1'
-    required: false
-    type: string
   node-version:
-    description: Node.js version to use. Example '12'
+    description: Node.js version to use
     default: '12'
     required: false
     type: string
-
+  yarn-version:
+    description: Yarn version to use
+    default: '1.22.15'
+    required: false
+    type: string
 
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@v2
+    - uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node-version }}
 
     - name: set helper variable
       shell: bash
-      run: echo "${name}=${value}" >> $GITHUB_ENV
-      env:
-        name: my_cache_prefix
-        value: ${{ runner.os }}-node${{ inputs.node-version }}-cache${{ inputs.cache-version }}
-
-    - name: set helper variable
-      shell: bash
-      run: echo "${name}=$(${value})" >> $GITHUB_ENV
       env:
         name: my_yarn_cache_path
         value: yarn cache dir
+      run: echo "${name}=$(${value})" >> $GITHUB_ENV
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
+      id: cache-yarn
+      with:
+        path: |
+          /usr/local/bin/yarn*
+          /usr/local/lib/node_modules/yarn
+        key: node${{ inputs.node-version }}-yarn${{ inputs.yarn-version }}
+        restore-keys: node${{ inputs.node-version }}-yarn
+
+    - name: conditionally install yarn
+      shell: bash
+      if: steps.cache-yarn.outputs.cache-hit != 'true'
+      working-directory: ./frontend
+      run: npm install --global yarn@${{ inputs.yarn-version }}
+
+    - uses: actions/cache@v3
       id: cache-lockfile
       with:
         path: |
           **/node_modules
           ${{ env.my_yarn_cache_path }}
-        key: ${{ env.my_cache_prefix }}-lockfile-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: ${{ env.my_cache_prefix }}-lockfile-
+        key: node${{ inputs.node-version }}-lockfile${{ hashFiles('frontend/yarn.lock') }}
+        restore-keys: node${{ inputs.node-version }}-lockfile
 
     - name: conditionally install dependencies
       shell: bash

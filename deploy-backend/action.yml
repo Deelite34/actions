@@ -32,11 +32,20 @@ runs:
         --function-name ${{ inputs.aws-resource-name }}_serverless_api
         | jq 'del(.Environment, .VpcConfig, .Role, .FunctionArn)'
 
+    - name: refresh lambda (migration)
+      shell: bash
+      run: >
+        aws lambda update-function-code
+        --s3-bucket     codeforpoznan-lambdas
+        --s3-key        ${{ inputs.aws-resource-name }}_migration.zip
+        --function-name ${{ inputs.aws-resource-name }}_migration
+        | jq 'del(.Environment, .VpcConfig, .Role, .FunctionArn)'
+
     - name: run migration
       shell: bash
       run: >
         aws lambda invoke
-        --function-name ${{ inputs.aws-resource-name }}_serverless_api
+        --function-name ${{ inputs.aws-resource-name }}_migration
         response.json > request.json
 
     - name: show migration output

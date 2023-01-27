@@ -1,4 +1,4 @@
-name: lint backend
+name: _ (call) lint backend
 
 on:
   workflow_call:

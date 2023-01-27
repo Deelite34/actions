@@ -1,7 +1,6 @@
 name: pack-frontend
 description: Packs frontend for deployment and uploads artifact.
 
-
 inputs:
   environment-name:
     description: environment name
@@ -11,7 +10,6 @@ inputs:
     description: environment url
     required: false
     type: string
-
 
 runs:
   using: composite

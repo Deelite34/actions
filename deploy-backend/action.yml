@@ -1,7 +1,6 @@
 name: deploy-backend
 description: Deploys backend artifact to AWS.
 
-
 inputs:
   artifact-path:
     default: artifacts/backend/lambda.zip
@@ -13,7 +12,6 @@ inputs:
   aws-cloudfront-id:
     required: true
     type: string
-
 
 runs:
   using: composite
@@ -34,7 +32,7 @@ runs:
         --function-name ${{ inputs.aws-resource-name }}_serverless_api
         | jq 'del(.Environment, .VpcConfig, .Role, .FunctionArn)'
 
-    - name: run migration lambda
+    - name: run migration
       shell: bash
       run: >
         aws lambda invoke

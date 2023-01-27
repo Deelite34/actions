@@ -1,14 +1,12 @@
 name: setup-infrastructure
 description: Sets up runner environment for infrastructure code.
 
-
 inputs:
   terraform-version:
     description: Terraform version to use
     default: '1.1.8'
     required: false
     type: string
-
 
 runs:
   using: composite
@@ -29,32 +27,28 @@ runs:
         name: my_terraform_dl_link
         value: https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/${{ env.my_terraform_zip_name }}
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: cache-terraform
       with:
         path: terraform
-        key: ${{ runner.os }}-terraform${{ inputs.terraform-version }}
-        restore-keys: ${{ runner.os }}-terraform
+        key: terraform${{ inputs.terraform-version }}
+        restore-keys: terraform
 
     - name: conditionally install terraform
       shell: bash
       if: steps.cache-terraform.outputs.cache-hit != 'true'
-      run: >
-        wget ${{ env.my_terraform_dl_link }} 
-        && unzip ${{ env.my_terraform_zip_name }} 
-        && rm ${{ env.my_terraform_zip_name }}
+      run: |
+        wget  ${{ env.my_terraform_dl_link }} 
+        unzip ${{ env.my_terraform_zip_name }} 
+        rm    ${{ env.my_terraform_zip_name }}
+        echo "$(pwd)" >> $GITHUB_PATH
 
-    - name: conditionally add terraform to path
-      shell: bash
-      if: steps.cache-terraform.outputs.cache-hit != 'true'
-      run: echo "$(pwd)" >> $GITHUB_PATH
-
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: cache-lockfile
       with:
         path: .terraform
-        key: ${{ runner.os }}-terraform${{ inputs.terraform-version }}-lockfile${{ hashFiles('**/.terraform.lock.hcl') }}
-        restore-keys: ${{ runner.os }}-terraform${{ inputs.terraform-version }}-lockfile
+        key: terraform${{ inputs.terraform-version }}-lockfile${{ hashFiles('**/.terraform.lock.hcl') }}
+        restore-keys: terraform${{ inputs.terraform-version }}-lockfile
 
     - name: conditionally install dependencies
       shell: bash

@@ -1,7 +1,6 @@
 name: deploy-frontend
 description: Deploys frontend artifact to AWS.
 
-
 inputs:
   artifact-path:
     default: artifacts/frontend/
@@ -13,7 +12,6 @@ inputs:
   aws-cloudfront-id:
     required: true
     type: string
-
 
 runs:
   using: composite
@@ -29,5 +27,5 @@ runs:
       shell: bash
       run: >
         aws cloudfront create-invalidation
-        --paths '/*'
         --distribution-id ${{ inputs.aws-cloudfront-id }}
+        --paths '/*'

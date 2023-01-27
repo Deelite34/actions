@@ -1,0 +1,12 @@
+name: lint backend
+
+on:
+  workflow_call:
+
+jobs:
+  lint-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: CodeForPoznan/actions/setup-backend@v2
+      - uses: CodeForPoznan/actions/lint-backend@v2

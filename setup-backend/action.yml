@@ -55,7 +55,7 @@ runs:
       uses: mathiasvr/command-output@v1
       id: blackv
       with:
-        run: black --version
+        run: pipenv run black --version
     
     - name: print black version
       shell: bash

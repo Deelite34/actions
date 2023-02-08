@@ -50,3 +50,7 @@ runs:
       run: pipenv install --dev --deploy
       env:
         PIPENV_VENV_IN_PROJECT: 1
+    
+    - name: echo the version of black
+      shell: bash
+      run: black --version

@@ -51,6 +51,13 @@ runs:
       env:
         PIPENV_VENV_IN_PROJECT: 1
     
-    - name: echo the version of black
+
+    - name: get black version
+      uses: mathiasvr/command-output@v1
+      id: blackv
+      with:
+        run: black --version
+    
+    - name: print black version
       shell: bash
-      run: black --version
+      run: echo Today is ${{ steps.blackv.outputs.stdout }}

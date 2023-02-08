@@ -62,7 +62,9 @@ runs:
       run: echo Today is ${{ steps.blackv.outputs.stdout }}
     
     - run: echo Command succeeded ${{ steps.blackv.outputs.stdout }}
+      shell: bash
       if: ${{ steps.cmd.outputs.stdout }}
 
     - run: echo Command failed ${{ steps.blackv.outputs.stderr }}
+      shell: bash
       if: ${{ steps.cmd.outputs.stderr }}

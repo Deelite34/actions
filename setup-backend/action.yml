@@ -50,23 +50,4 @@ runs:
       run: pipenv install --dev --deploy
       env:
         PIPENV_VENV_IN_PROJECT: 1
-    
-    - name: get black version
-      uses: mathiasvr/command-output@v1
-      id: blackv
-      with:
-        run: pipenv run black --version
-    
-    - name: print black version
-      shell: bash
-      run: echo Today is ${{ steps.blackv.outputs.stdout }}
-    
-    - name: print stdout
-      shell: bash
-      run: echo Command succeeded ${{ steps.blackv.outputs.stdout }}
-      if: ${{ steps.cmd.outputs.stdout }}
-
-    - name: print stderr
-      shell: bash
-      run: echo Command failed ${{ steps.blackv.outputs.stderr }}
-      if: ${{ steps.cmd.outputs.stderr }}
+        

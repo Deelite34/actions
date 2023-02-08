@@ -8,5 +8,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: CodeForPoznan/actions/setup-backend@v2
-      - uses: CodeForPoznan/actions/lint-backend@v2
+      - uses: Deelite34/actions/setup-backend@v2
+      - uses: Deelite34/actions/lint-backend@v2

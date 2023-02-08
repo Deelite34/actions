@@ -61,10 +61,12 @@ runs:
       shell: bash
       run: echo Today is ${{ steps.blackv.outputs.stdout }}
     
-    - run: echo Command succeeded ${{ steps.blackv.outputs.stdout }}
+    - name: print stdout
       shell: bash
+      run: echo Command succeeded ${{ steps.blackv.outputs.stdout }}
       if: ${{ steps.cmd.outputs.stdout }}
 
-    - run: echo Command failed ${{ steps.blackv.outputs.stderr }}
+    - name: print stderr
       shell: bash
+      run: echo Command failed ${{ steps.blackv.outputs.stderr }}
       if: ${{ steps.cmd.outputs.stderr }}
